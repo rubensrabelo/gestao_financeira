@@ -1,6 +1,12 @@
-def main():
-    print("Hello from gestao-financeira!")
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
+from database import create_db_and_tables
 
 
-if __name__ == "__main__":
-    main()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+
+app = FastAPI(lifespan=lifespan)
