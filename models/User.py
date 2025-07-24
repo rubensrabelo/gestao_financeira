@@ -8,6 +8,7 @@ class UserBase(SQLModel):
     lastname: str = Field(max_length=50)
     email: str = Field(unique=True)
     password: str
+    active: bool = Field(default=True)
 
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
