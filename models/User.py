@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
 
 
-class UserBase(SQLModel, table=True):
+class UserBase(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
     firstname: str = Field(max_length=50)
     lastname: str = Field(max_length=50)
@@ -15,3 +15,7 @@ class UserBase(SQLModel, table=True):
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
+
+
+class User(UserBase, table=True):
+    ...
