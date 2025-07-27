@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class UserCreateDTO(BaseModel):
+class UserResponseDTO(BaseModel):
     id: int
     firstname: str
     lastname: str
