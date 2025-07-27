@@ -198,6 +198,7 @@ dependencies = [
     { name = "psycopg2-binary" },
     { name = "pyproject-toml" },
     { name = "sqlmodel" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -207,6 +208,7 @@ requires-dist = [
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pyproject-toml", specifier = ">=0.1.0" },
     { name = "sqlmodel", specifier = ">=0.0.24" },
+    { name = "uvicorn", specifier = ">=0.35.0" },
 ]
 
 [[package]]
