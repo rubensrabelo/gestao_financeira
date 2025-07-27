@@ -72,7 +72,12 @@ async def update(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found."
         )
-    for key, value in user_update.model_dump(exclude_unset=True).items():
+    update_data = user_update.model_dump(exclude_unset=True)
+
+    if "password" in update_data:
+        update_data["password"] = hash_password(update_data["password"])
+
+    for key, value in update_data.items():
         setattr(user, key, value)
 
     session.add(user)

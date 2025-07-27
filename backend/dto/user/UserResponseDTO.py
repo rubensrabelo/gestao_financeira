@@ -7,5 +7,6 @@ class UserResponseDTO(BaseModel):
     firstname: str
     lastname: str
     email: str
+    active: bool
     created_at: datetime
     updated_at: datetime
