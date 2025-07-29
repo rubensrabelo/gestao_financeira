@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Register.module.css";
 
 function Register() {
@@ -11,12 +11,11 @@ function Register() {
     });
 
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-
+    const navigate = useNavigate();
+   
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
         setError("");
-        setSuccess("");
     };
 
     const handleSubmit = async (e) => {
@@ -37,8 +36,7 @@ function Register() {
                 return;
             }
 
-            setSuccess("Usuário cadastrado com sucesso!");
-            setForm({ firstname: "", lastname: "", email: "", password: "" });
+            navigate("/login");
         } catch (error) {
             console.error("Erro na conexão:", error);
             setError("Erro ao conectar com o servidor.");
@@ -50,9 +48,6 @@ function Register() {
             <h2>Cadastro de Usuário</h2>
 
             <form onSubmit={handleSubmit} className={styles.form}>
-                {error && <p className={styles.error}>{error}</p>}
-                {success && <p className={styles.success}>{success}</p>}
-
                 <input
                     className={styles.input}
                     name="firstname"
@@ -87,6 +82,9 @@ function Register() {
                     onChange={handleChange}
                     required
                 />
+
+                {error && <p className={styles.error}>{error}</p>}
+
                 <button type="submit" className={styles.button}>
                     Cadastrar
                 </button>
