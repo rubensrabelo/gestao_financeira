@@ -1,0 +1,23 @@
+.container {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.buttons {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.link {
+  padding: 12px 20px;
+  background-color: #3b82f6;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.link:hover {
+  background-color: #2563eb;
+}
