@@ -5,5 +5,5 @@ from sqlmodel import Field
 class UserUpdateDTO(BaseModel):
     firstname: str = Field(max_length=50)
     lastname: str = Field(max_length=50)
-    email: str = Field(unique=True)
-    password: str
+    email: str | None = Field(default=None, unique=True)
+    password: str | None = None

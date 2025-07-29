@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from starlette import status
+from datetime import datetime, timezone
 
 from database import get_session
 from utils.security import hash_password
@@ -34,11 +35,13 @@ async def update_profile(
 ) -> UserUpdateDTO:
     update_data = user_update.model_dump(exclude_unset=True)
 
-    if "password" in update_data:
+    if "password" in update_data and update_data["password"]:
         update_data["password"] = hash_password(update_data["password"])
 
     for key, value in update_data.items():
         setattr(current_user, key, value)
+
+    current_user.updated_at = datetime.now(timezone.utc)
 
     session.add(current_user)
     session.commit()
@@ -54,6 +57,8 @@ async def delete_profile(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> None:
+    current_user.updated_at = datetime.now(timezone.utc)
     current_user.active = False
+
     session.add(current_user)
     session.commit()
