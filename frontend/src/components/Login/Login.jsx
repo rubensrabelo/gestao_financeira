@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 
 function Login() {
@@ -7,10 +7,12 @@ function Login() {
         email: "",
         password: ""
     });
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+        setError("");
     };
 
     const handleSubmit = async (e) => {
@@ -25,7 +27,7 @@ function Login() {
 
             if (!res.ok) {
                 const error = await res.json();
-                alert("Erro: " + error.detail);
+                setError(data.detail || "Erro ao fazer login.");
                 return;
             }
 
@@ -34,9 +36,9 @@ function Login() {
             alert("Login bem-sucedido");
 
             // Redirecionar para dashboard ou home protegida
-            // navigate('/dashboard');
+            // navigate("/dashboard");
         } catch (err) {
-            alert("Erro ao conectar ao com o servidor.")
+            setError("Erro ao conectar com o servidor.");
         }
     };
 
@@ -61,8 +63,15 @@ function Login() {
                         onChange={handleChange}
                         required
                     />
+
+                    {error && <p className={styles.error}>{error}</p>}
+
                     <button type="submit">Entrar</button>
                 </form>
+
+                <p className={styles.linkText}>
+                    Não tem conta? <Link to="/register">Cadastre-se</Link>
+                </p>
             </div>
         </>
     );
