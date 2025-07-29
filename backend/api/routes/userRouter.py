@@ -1,104 +1,59 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
-# from sqlalchemy.orm import joinedload
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
 from starlette import status
 
 from database import get_session
 from utils.security import hash_password
-from dto.user import UserResponseDTO, UserCreateDTO, UserUpdateDTO
+from middleware.auth import get_current_user
+from dto.user import UserResponseDTO, UserUpdateDTO
 from models.User import User
 
 router = APIRouter()
 
 
-@router.post(
-        "/",
-        response_model=UserResponseDTO,
-        status_code=status.HTTP_201_CREATED
-)
-async def create(
-    user_create: UserCreateDTO,
-    session: Session = Depends(get_session)
-) -> UserResponseDTO:
-    statement = select(User).where(User.email == user_create.email)
-    user_exists = session.exec(statement).first()
-    if user_exists:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="This email already exists."
-        )
-    user_create.password = hash_password(user_create.password)
-    user = User(**user_create.model_dump())
-    session.add(user)
-    session.commit()
-    session.refresh(user)
-    return user
-
-
 @router.get(
-        "/{user_id}",
+        "/me",
         response_model=UserResponseDTO,
         status_code=status.HTTP_200_OK
 )
-async def find_by_id(
-    user_id: int,
-    session: Session = Depends(get_session)
+async def get_profile(
+    current_user: User = Depends(get_current_user)
 ) -> UserResponseDTO:
-    statement = (
-        select(User).where(User.id == user_id)
-    )
-    user = session.exec(statement).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found."
-        )
-    return user
+    return current_user
 
 
 @router.put(
-        "/{user_id}",
+        "/me",
         response_model=UserResponseDTO,
         status_code=status.HTTP_200_OK
 )
-async def update(
-    user_id: int,
+async def update_profile(
     user_update: UserUpdateDTO,
-    session: Session = Depends(get_session)
-) -> UserResponseDTO:
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found."
-        )
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> UserUpdateDTO:
     update_data = user_update.model_dump(exclude_unset=True)
 
     if "password" in update_data:
         update_data["password"] = hash_password(update_data["password"])
 
     for key, value in update_data.items():
-        setattr(user, key, value)
+        setattr(current_user, key, value)
 
-    session.add(user)
+    session.add(current_user)
     session.commit()
-    session.refresh(user)
-    return user
+    session.refresh(current_user)
+    return current_user
 
 
 @router.delete(
-        "/{user_id}"
+        "/me",
+        status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete(
-    user_id: int,
-    session: Session = Depends(get_session)
+async def delete_profile(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
 ) -> None:
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found."
-        )
-    user.active = False
-    session.add(user)
+    current_user.active = False
+    session.add(current_user)
     session.commit()
