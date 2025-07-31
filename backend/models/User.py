@@ -1,5 +1,7 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
+
+from Category import Category
 
 
 class UserBase(SQLModel):
@@ -19,4 +21,4 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
-    ...
+    categories: list["Category"] = Relationship(back_populates="user")
