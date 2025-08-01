@@ -21,4 +21,4 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
-    categories: list["Category"] = Relationship(back_populates="user")
+    categories: set["Category"] = Relationship(back_populates="user")

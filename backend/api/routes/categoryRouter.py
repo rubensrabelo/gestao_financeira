@@ -1,52 +1,130 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
+from starlette import status
 
 from database import get_session
 from models.Category import Category
 from models.User import User
-from dto.category import CategoryCreateDTO, CategoryResponseDTO, CategoryUpdateDTO
+from dto.category import (
+    CategoryCreateDTO, CategoryResponseDTO, CategoryUpdateDTO
+)
 from middleware.auth import get_current_user
 
 router = APIRouter()
 
 
+@router.post(
+    "/",
+    response_model=CategoryResponseDTO,
+    status_code=status.HTTP_201_CREATED
+)
+async def create(
+    category_create: CategoryCreateDTO,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> CategoryResponseDTO:
+    statement = (
+        select(Category)
+        .where(Category.name == category_create.name)
+        .where(Category.user_id == current_user.id)
+    )
+    existing_category = session.exec(statement).first()
+    if existing_category:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Category already exists for this user."
+        )
+    category = Category(
+        **category_create.model_dump(),
+        user_id=current_user.id
+    )
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+    return category
+
+
 @router.get(
     "/",
+    response_model=list[CategoryResponseDTO],
+    status_code=status.HTTP_200_OK
+)
+async def get_all(
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=10, le=100),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> list[CategoryResponseDTO]:
+    statement = (
+        select(Category)
+        .where(Category.user_id == current_user.id)
+        .offset(offset)
+        .limit(limit)
+    )
+    return session.exec(statement).all()
+
+
+@router.get(
+    "/{id}",
     response_model=CategoryResponseDTO,
     status_code=status.HTTP_200_OK
 )
-async def create() -> CategoryResponseDTO:
-    ...
+async def get_by_id(
+    id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> CategoryResponseDTO:
+    category = session.get(Category, id)
+    if not category or category.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found."
+        )
+    return category
 
 
-@router.get(
-    "/",
+@router.put(
+    "/{id}",
     response_model=CategoryResponseDTO,
     status_code=status.HTTP_200_OK
 )
-async def get_all() -> CategoryResponseDTO:
-    ...
+async def update(
+    id: int,
+    category_update: CategoryUpdateDTO,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> CategoryResponseDTO:
+    category = session.get(Category, id)
+    if not category or category.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found"
+        )
+
+    for key, value in category_update.model_dump(exclude_unset=True).items():
+        setattr(category, key, value)
+
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+    return category
 
 
-@router.get(
-    "/",
-    response_model=CategoryResponseDTO,
-    status_code=status.HTTP_200_OK
+@router.delete(
+    "/{id}",
+    status_code=status.HTTP_204_NO_CONTENT
 )
-async def get_by_id() -> CategoryResponseDTO:
-    ...
+async def delete(
+    id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> None:
+    category = session.get(Category, id)
+    if not category or category.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found"
+        )
 
-@router.get(
-    "/",
-    response_model=CategoryResponseDTO,
-    status_code=status.HTTP_200_OK
-)
-async def update() -> CategoryResponseDTO:
-    ...
-
-@router.get(
-    "/",
-    status_code=status.HTTP_200_OK
-)
-async def delete() -> CategoryResponseDTO:
-    ...
+    session.delete(category)
+    session.commit()
