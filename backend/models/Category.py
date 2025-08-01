@@ -1,9 +1,9 @@
+from typing import TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from User import User
+    from .User import User
 
 
 class CategoryBase(SQLModel):

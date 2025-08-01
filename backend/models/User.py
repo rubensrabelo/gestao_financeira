@@ -1,7 +1,10 @@
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
-from Category import Category
+if TYPE_CHECKING:
+    from .Category import Category
 
 
 class UserBase(SQLModel):
@@ -21,4 +24,10 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
-    categories: set["Category"] = Relationship(back_populates="user")
+    categories: set["Category"] = Relationship(
+        back_populates="user",
+        sa_relationship=relationship(
+            "Category",
+            collection_class=set
+        )
+    )
