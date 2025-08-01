@@ -28,7 +28,7 @@ async def get_profile(
         response_model=UserResponseDTO,
         status_code=status.HTTP_200_OK
 )
-async def update_profile(
+async def update(
     user_update: UserUpdateDTO,
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
@@ -53,7 +53,7 @@ async def update_profile(
         "/me",
         status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_profile(
+async def delete(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> None:
