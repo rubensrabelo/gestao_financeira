@@ -2,6 +2,7 @@
 classDiagram
   direction LR
   class User {
+    - id: int
     - firstname: str
     - lastname: str
     - email: str
@@ -30,5 +31,5 @@ classDiagram
   
   User "1" -- "*" Transaction
   User "1" -- "*" Category
-  Transaction "1" -- "*" Category
+  Category "*" -- "1" Transaction
 ```
