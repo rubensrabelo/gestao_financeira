@@ -6,8 +6,8 @@ from ...models.enums.TypeEnum import TypeEnum
 
 class TransactionResponseDTO(BaseModel):
     id: int
+    transaction_date: date
     type: TypeEnum
     amount: float
-    transaction_date: date
     created_at: datetime
     updated_at: datetime

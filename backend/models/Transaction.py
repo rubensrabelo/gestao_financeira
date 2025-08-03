@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 class TransactionBase(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
-    type: TypeEnum
-    amount: float
     transaction_date: date
+    type: TypeEnum
+    amount: float = Field(ge=0)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
