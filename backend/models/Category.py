@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 if TYPE_CHECKING:
     from User import User
+    from Transaction import Transaction
 
 
 class CategoryBase(SQLModel):
@@ -20,3 +21,4 @@ class CategoryBase(SQLModel):
 class Category(CategoryBase, table=True):
     user_id: int = Field(foreign_key="user.id")
     user: "User" = Relationship(back_populates="categories")
+    transactions: list["Transaction"] = Relationship(back_populates="category")
