@@ -3,7 +3,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
 
 if TYPE_CHECKING:
-    from .User import User
+    from User import User
 
 
 class CategoryBase(SQLModel):

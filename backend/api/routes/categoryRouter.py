@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from starlette import status
+from datetime import datetime, timezone
 
 from database import get_session
 from models.Category import Category
@@ -103,6 +104,8 @@ async def update(
 
     for key, value in category_update.model_dump(exclude_unset=True).items():
         setattr(category, key, value)
+
+    category.updated_at = datetime.now(timezone.utc)
 
     session.add(category)
     session.commit()

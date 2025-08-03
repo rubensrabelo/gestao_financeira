@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .Category import Category
+    from Category import Category
 
 
 class UserBase(SQLModel):
