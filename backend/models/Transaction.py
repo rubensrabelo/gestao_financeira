@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import date, datetime, timezone
 
-from .enums.TypeEnum import TypeEnum
+from enums.TypeEnum import TypeEnum
 
 if TYPE_CHECKING:
     from User import User
