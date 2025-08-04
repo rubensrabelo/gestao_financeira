@@ -25,6 +25,8 @@ class UserBase(SQLModel):
 
 
 class UserModel(UserBase, table=True):
+    __tablename__ = "tb_user"
+
     categories: set["CategoryModel"] = Relationship(
         back_populates="user", sa_relationship=relationship(
             "CategoryModel", collection_class=set

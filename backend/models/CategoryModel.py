@@ -19,7 +19,9 @@ class CategoryBase(SQLModel):
 
 
 class CategoryModel(CategoryBase, table=True):
-    user_id: int = Field(foreign_key="user.id")
+    __tablename__ = "tb_category"
+
+    user_id: int = Field(foreign_key="tb_user.id")
     user: "UserModel" = Relationship(back_populates="categories")
     transactions: list["TransactionModel"] = Relationship(
         back_populates="category"

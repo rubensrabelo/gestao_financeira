@@ -24,8 +24,10 @@ class TransactionBase(SQLModel):
 
 
 class TransactionModel(TransactionBase, table=True):
-    category_id: int = Field(foreign_key="category.id")
-    user_id: int = Field(foreign_key="user.id")
+    __tablename__ = "tb_transaction"
+
+    category_id: int = Field(foreign_key="tb_category.id")
+    user_id: int = Field(foreign_key="tb_user.id")
 
     category: "CategoryModel" = Relationship(back_populates="transactions")
     user: "UserModel" = Relationship(back_populates="transactions")
