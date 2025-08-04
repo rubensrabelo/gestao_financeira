@@ -7,7 +7,7 @@ from database import get_session
 from utils.security import hash_password
 from middleware.auth import get_current_user
 from dto.user import UserResponseDTO, UserUpdateDTO
-from models.User import User
+from backend.models.UserModel import UserModel
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ router = APIRouter()
         status_code=status.HTTP_200_OK
 )
 async def get_profile(
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> UserResponseDTO:
     return current_user
 
@@ -31,7 +31,7 @@ async def get_profile(
 async def update(
     user_update: UserUpdateDTO,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> UserUpdateDTO:
     update_data = user_update.model_dump(exclude_unset=True)
 
@@ -55,7 +55,7 @@ async def update(
 )
 async def delete(
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> None:
     current_user.active = False
     current_user.updated_at = datetime.now(timezone.utc)

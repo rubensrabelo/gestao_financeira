@@ -6,7 +6,7 @@ from database import get_session
 from utils.security import hash_password, verify_password, create_access_token
 from dto.user import UserResponseDTO, UserCreateDTO
 from dto.auth import LoginDTO, TokenDTO
-from models.User import User
+from models.UserModel import UserModel
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ async def register(
     user_create: UserCreateDTO,
     session: Session = Depends(get_session)
 ) -> UserResponseDTO:
-    statement = select(User).where(User.email == user_create.email)
+    statement = select(UserModel).where(UserModel.email == user_create.email)
     if session.exec(statement).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -28,7 +28,7 @@ async def register(
         )
 
     user_create.password = hash_password(user_create.password)
-    user = User(**user_create.model_dump())
+    user = UserModel(**user_create.model_dump())
     session.add(user)
     session.commit()
     session.refresh(user)
@@ -44,7 +44,7 @@ async def login(
     credentials: LoginDTO,
     session: Session = Depends(get_session)
 ) -> TokenDTO:
-    statement = select(User).where(User.email == credentials.email)
+    statement = select(UserModel).where(UserModel.email == credentials.email)
     user = session.exec(statement).first()
 
     if not user or not verify_password(credentials.password, user.password):

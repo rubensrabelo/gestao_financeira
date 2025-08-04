@@ -5,8 +5,8 @@ from datetime import date, datetime, timezone
 from enums.TypeEnum import TypeEnum
 
 if TYPE_CHECKING:
-    from User import User
-    from Category import Category
+    from backend.models.UserModel import User
+    from backend.models.CategoryModel import Category
 
 
 class TransactionBase(SQLModel):
@@ -23,7 +23,7 @@ class TransactionBase(SQLModel):
     )
 
 
-class Transaction(TransactionBase, table=True):
+class TransactionModel(TransactionBase, table=True):
     category_id: int = Field(foreign_key="category.id")
     user_id: int = Field(foreign_key="user.id")
 

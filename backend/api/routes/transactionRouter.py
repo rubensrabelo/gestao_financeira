@@ -4,9 +4,9 @@ from starlette import status
 from datetime import datetime, timezone
 
 from database import get_session
-from models.Transaction import Transaction
-from models.Category import Category
-from models.User import User
+from backend.models.TransactionModel import TransactionModel
+from backend.models.CategoryModel import CategoryModel
+from backend.models.UserModel import UserModel
 from dto.transaction import (
     TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO
 )
@@ -23,17 +23,17 @@ router = APIRouter()
 async def create(
     transaction_create: TransactionCreateDTO,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> TransactionResponseDTO:
     if transaction_create.category_id:
-        category = session.get(Category, transaction_create.category_id)
+        category = session.get(CategoryModel, transaction_create.category_id)
         if not category or category.user_id != current_user.id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid category for this user"
             )
 
-    transaction = Transaction(
+    transaction = TransactionModel(
         **transaction_create.model_dump(),
         user_id=current_user.id
     )
@@ -52,11 +52,11 @@ async def get_all(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=10, le=100),
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> list[TransactionResponseDTO]:
     statement = (
-        select(Transaction)
-        .where(Transaction.user_id == current_user.id)
+        select(TransactionModel)
+        .where(TransactionModel.user_id == current_user.id)
         .offset(offset)
         .limit(limit)
     )
@@ -71,9 +71,9 @@ async def get_all(
 async def get_by_id(
     id: int,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> TransactionResponseDTO:
-    transaction = session.get(Transaction, id)
+    transaction = session.get(TransactionModel, id)
     if not transaction or transaction.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -91,9 +91,9 @@ async def update(
     id: int,
     transaction_update: TransactionUpdateDTO,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> TransactionResponseDTO:
-    transaction = session.get(Transaction, id)
+    transaction = session.get(TransactionModel, id)
     if not transaction or transaction.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -101,7 +101,7 @@ async def update(
         )
 
     if transaction_update.category_id:
-        category = session.get(Category, transaction_update.category_id)
+        category = session.get(CategoryModel, transaction_update.category_id)
         if not category or category.user_id != current_user.id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -129,9 +129,9 @@ async def update(
 async def delete(
     id: int,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> None:
-    transaction = session.get(Transaction, id)
+    transaction = session.get(TransactionModel, id)
     if not transaction or transaction.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

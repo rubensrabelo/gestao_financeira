@@ -4,8 +4,8 @@ from starlette import status
 from datetime import datetime, timezone
 
 from database import get_session
-from models.Category import Category
-from models.User import User
+from backend.models.CategoryModel import CategoryModel
+from backend.models.UserModel import UserModel
 from dto.category import (
     CategoryCreateDTO, CategoryResponseDTO, CategoryUpdateDTO
 )
@@ -22,12 +22,12 @@ router = APIRouter()
 async def create(
     category_create: CategoryCreateDTO,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> CategoryResponseDTO:
     statement = (
-        select(Category)
-        .where(Category.name == category_create.name)
-        .where(Category.user_id == current_user.id)
+        select(CategoryModel)
+        .where(CategoryModel.name == category_create.name)
+        .where(CategoryModel.user_id == current_user.id)
     )
     existing_category = session.exec(statement).first()
     if existing_category:
@@ -35,7 +35,7 @@ async def create(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Category already exists for this user."
         )
-    category = Category(
+    category = CategoryModel(
         **category_create.model_dump(),
         user_id=current_user.id
     )
@@ -54,11 +54,11 @@ async def get_all(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=10, le=100),
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> list[CategoryResponseDTO]:
     statement = (
-        select(Category)
-        .where(Category.user_id == current_user.id)
+        select(CategoryModel)
+        .where(CategoryModel.user_id == current_user.id)
         .offset(offset)
         .limit(limit)
     )
@@ -73,9 +73,9 @@ async def get_all(
 async def get_by_id(
     id: int,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> CategoryResponseDTO:
-    category = session.get(Category, id)
+    category = session.get(CategoryModel, id)
     if not category or category.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -93,9 +93,9 @@ async def update(
     id: int,
     category_update: CategoryUpdateDTO,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> CategoryResponseDTO:
-    category = session.get(Category, id)
+    category = session.get(CategoryModel, id)
     if not category or category.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -120,9 +120,9 @@ async def update(
 async def delete(
     id: int,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
 ) -> None:
-    category = session.get(Category, id)
+    category = session.get(CategoryModel, id)
     if not category or category.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
