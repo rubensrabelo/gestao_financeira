@@ -14,6 +14,7 @@ class TransactionBase(SQLModel):
     transaction_date: date
     type: TypeEnum
     amount: float = Field(ge=0)
+    active: bool = Field(default=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
@@ -23,8 +24,8 @@ class TransactionBase(SQLModel):
 
 
 class Transaction(TransactionBase, table=True):
-    user_id: int = Field(foreign_key="user.id")
     category_id: int = Field(foreign_key="category.id")
+    user_id: int = Field(foreign_key="user.id")
 
-    user: "User" = Relationship(back_populates="transactions")
     category: "Category" = Relationship(back_populates="transactions")
+    user: "User" = Relationship(back_populates="transactions")

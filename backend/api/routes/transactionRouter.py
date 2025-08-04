@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 
 from database import get_session
 from models.Transaction import Transaction
+from models.Category import Category
 from models.User import User
 from dto.transaction import (
     TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO
@@ -24,7 +25,22 @@ async def create(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> TransactionResponseDTO:
-    ...
+    if transaction_create.category_id:
+        category = session.get(Category, transaction_create.category_id)
+        if not category or category.user_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid category for this user"
+            )
+
+    transaction = Transaction(
+        **transaction_create.model_dump(),
+        user_id=current_user.id
+    )
+    session.add(transaction)
+    session.commit()
+    session.refresh(transaction)
+    return transaction
 
 
 @router.get(
@@ -38,7 +54,13 @@ async def get_all(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> list[TransactionResponseDTO]:
-    ...
+    statement = (
+        select(Transaction)
+        .where(Transaction.user_id == current_user.id)
+        .offset(offset)
+        .limit(limit)
+    )
+    return session.exec(statement).all()
 
 
 @router.get(
@@ -51,7 +73,13 @@ async def get_by_id(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> TransactionResponseDTO:
-    ...
+    transaction = session.get(Transaction, id)
+    if not transaction or transaction.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Transaction not found"
+        )
+    return transaction
 
 
 @router.put(
@@ -65,7 +93,33 @@ async def update(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> TransactionResponseDTO:
-    ...
+    transaction = session.get(Transaction, id)
+    if not transaction or transaction.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Transaction not found"
+        )
+
+    if transaction_update.category_id:
+        category = session.get(Category, transaction_update.category_id)
+        if not category or category.user_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid category for this user"
+            )
+
+    for key, value in (
+        transaction_update.model_dump(exclude_unset=True).items()
+    ):
+        setattr(transaction, key, value)
+
+    transaction.updated_at = datetime.now(timezone.utc)
+
+    session.add(transaction)
+    session.commit()
+    session.refresh(transaction)
+
+    return transaction
 
 
 @router.delete(
@@ -77,4 +131,13 @@ async def delete(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> None:
-    ...
+    transaction = session.get(Transaction, id)
+    if not transaction or transaction.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Transaction not found"
+        )
+    transaction.active = False
+
+    session.add(transaction)
+    session.commit()

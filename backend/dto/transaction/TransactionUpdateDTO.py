@@ -9,3 +9,4 @@ class TransactionUpdateDTO(BaseModel):
     transaction_date: date
     type: TypeEnum
     amount: float = Field(ge=0)
+    category_id: int
