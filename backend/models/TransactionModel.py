@@ -2,11 +2,11 @@ from typing import TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import date, datetime, timezone
 
-from enums.TypeEnum import TypeEnum
+from .enums.TypeEnum import TypeEnum
 
 if TYPE_CHECKING:
-    from backend.models.UserModel import User
-    from backend.models.CategoryModel import Category
+    from models.UserModel import UserModel
+    from models.CategoryModel import CategoryModel
 
 
 class TransactionBase(SQLModel):
@@ -27,5 +27,5 @@ class TransactionModel(TransactionBase, table=True):
     category_id: int = Field(foreign_key="category.id")
     user_id: int = Field(foreign_key="user.id")
 
-    category: "Category" = Relationship(back_populates="transactions")
-    user: "User" = Relationship(back_populates="transactions")
+    category: "CategoryModel" = Relationship(back_populates="transactions")
+    user: "UserModel" = Relationship(back_populates="transactions")

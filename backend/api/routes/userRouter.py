@@ -7,7 +7,7 @@ from database import get_session
 from utils.security import hash_password
 from middleware.auth import get_current_user
 from dto.user import UserResponseDTO, UserUpdateDTO
-from backend.models.UserModel import UserModel
+from models.UserModel import UserModel
 
 router = APIRouter()
 

@@ -4,8 +4,8 @@ from starlette import status
 from datetime import datetime, timezone
 
 from database import get_session
-from backend.models.CategoryModel import CategoryModel
-from backend.models.UserModel import UserModel
+from models.CategoryModel import CategoryModel
+from models.UserModel import UserModel
 from dto.category import (
     CategoryCreateDTO, CategoryResponseDTO, CategoryUpdateDTO
 )

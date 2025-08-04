@@ -4,9 +4,9 @@ from starlette import status
 from datetime import datetime, timezone
 
 from database import get_session
-from backend.models.TransactionModel import TransactionModel
-from backend.models.CategoryModel import CategoryModel
-from backend.models.UserModel import UserModel
+from models.TransactionModel import TransactionModel
+from models.CategoryModel import CategoryModel
+from models.UserModel import UserModel
 from dto.transaction import (
     TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO
 )

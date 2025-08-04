@@ -3,8 +3,8 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
 
 if TYPE_CHECKING:
-    from backend.models.UserModel import User
-    from backend.models.TransactionModel import Transaction
+    from models.UserModel import UserModel
+    from models.TransactionModel import TransactionModel
 
 
 class CategoryBase(SQLModel):
@@ -20,5 +20,7 @@ class CategoryBase(SQLModel):
 
 class CategoryModel(CategoryBase, table=True):
     user_id: int = Field(foreign_key="user.id")
-    user: "User" = Relationship(back_populates="categories")
-    transactions: list["Transaction"] = Relationship(back_populates="category")
+    user: "UserModel" = Relationship(back_populates="categories")
+    transactions: list["TransactionModel"] = Relationship(
+        back_populates="category"
+    )

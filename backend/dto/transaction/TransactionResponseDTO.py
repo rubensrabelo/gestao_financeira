@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import date, datetime
 
-from ...models.enums.TypeEnum import TypeEnum
+from models.enums.TypeEnum import TypeEnum
 
 
 class TransactionResponseDTO(BaseModel):

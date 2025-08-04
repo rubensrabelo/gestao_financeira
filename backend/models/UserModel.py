@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from backend.models.CategoryModel import Category
-    from backend.models.TransactionModel import Transaction
+    from models.CategoryModel import CategoryModel
+    from models.TransactionModel import TransactionModel
 
 
 class UserBase(SQLModel):
@@ -25,9 +25,11 @@ class UserBase(SQLModel):
 
 
 class UserModel(UserBase, table=True):
-    categories: set["Category"] = Relationship(
+    categories: set["CategoryModel"] = Relationship(
         back_populates="user", sa_relationship=relationship(
-            "Category", collection_class=set
+            "CategoryModel", collection_class=set
         )
     )
-    transactions: list["Transaction"] = Relationship(back_populates="user")
+    transactions: list["TransactionModel"] = Relationship(
+        back_populates="user"
+    )
