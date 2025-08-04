@@ -57,8 +57,8 @@ async def delete(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ) -> None:
-    current_user.updated_at = datetime.now(timezone.utc)
     current_user.active = False
+    current_user.updated_at = datetime.now(timezone.utc)
 
     session.add(current_user)
     session.commit()

@@ -138,6 +138,7 @@ async def delete(
             detail="Transaction not found"
         )
     transaction.active = False
+    transaction.updated_at = datetime.now(timezone.utc)
 
     session.add(transaction)
     session.commit()
