@@ -14,3 +14,5 @@ function TransactionList({ transactions }) {
     </div>
   );
 }
+
+export default TransactionList;

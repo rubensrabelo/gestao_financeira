@@ -2,7 +2,13 @@ import { useState } from "react";
 import styles from "./TransactionForm.module.css";
 
 function TransactionForm({ onAdd, categories }) {
-  const [form, setForm] = useState({ type: "income", value: "", category: "" });
+  const [form, setForm] = useState({
+    transaction_date: "",
+    type: "income",
+    amount: "",
+    category_id: "",
+  });
+
   const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
@@ -11,6 +17,14 @@ function TransactionForm({ onAdd, categories }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      transaction_date: form.transaction_date,
+      type: form.type,
+      amount: parseFloat(form.amount),
+      category_id: parseInt(form.category_id),
+    };
+
     try {
       await fetch("http://localhost:8000/transactions", {
         method: "POST",
@@ -18,9 +32,16 @@ function TransactionForm({ onAdd, categories }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
-      setForm({ type: "income", value: "", category: "" });
+
+      setForm({
+        transaction_date: "",
+        type: "income",
+        amount: "",
+        category_id: "",
+      });
+
       onAdd();
     } catch (err) {
       console.error("Erro ao adicionar transação:", err);
@@ -29,18 +50,46 @@ function TransactionForm({ onAdd, categories }) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      <input
+        type="date"
+        name="transaction_date"
+        value={form.transaction_date}
+        onChange={handleChange}
+        required
+      />
+
       <select name="type" value={form.type} onChange={handleChange}>
         <option value="income">Ganho</option>
         <option value="expense">Gasto</option>
       </select>
-      <input name="value" type="number" placeholder="Valor" value={form.value} onChange={handleChange} required />
-      <select name="category" value={form.category} onChange={handleChange} required>
+
+      <input
+        name="amount"
+        type="number"
+        placeholder="Valor"
+        value={form.amount}
+        onChange={handleChange}
+        required
+        min={0}
+      />
+
+      <select
+        name="category_id"
+        value={form.category_id}
+        onChange={handleChange}
+        required
+      >
         <option value="">Selecione Categoria</option>
         {categories.map((c) => (
-          <option key={c.id} value={c.name}>{c.name}</option>
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
         ))}
       </select>
+
       <button type="submit">Adicionar</button>
     </form>
   );
 }
+
+export default TransactionForm;

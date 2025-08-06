@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TransactionList from "../Transaction/TransactionList";
 import TransactionForm from "../Transaction/TransactionForm";
-import CategoryForm from "./CategoryForm";
+import CategoryForm from "../Category/CategoryForm";
 
 import styles from "./Home.module.css";
 
