@@ -33,10 +33,9 @@ function Login() {
 
             const data = await res.json();
             localStorage.setItem("token", data.access_token);
-            alert("Login bem-sucedido");
 
             // Redirecionar para dashboard ou home protegida
-            // navigate("/dashboard");
+            navigate("/home");
         } catch (err) {
             setError("Erro ao conectar com o servidor.");
         }
