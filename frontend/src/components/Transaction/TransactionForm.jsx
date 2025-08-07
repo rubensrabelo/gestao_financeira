@@ -59,8 +59,8 @@ function TransactionForm({ onAdd, categories }) {
       />
 
       <select name="type" value={form.type} onChange={handleChange}>
-        <option value="income">Ganho</option>
-        <option value="expense">Gasto</option>
+        <option value="income">Entrada</option>
+        <option value="expense">Saída</option>
       </select>
 
       <input
