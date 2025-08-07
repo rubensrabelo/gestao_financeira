@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
+from sqlalchemy.orm import joinedload
 from starlette import status
 from datetime import datetime, timezone
 
@@ -57,6 +58,7 @@ async def get_all(
     statement = (
         select(TransactionModel)
         .where(TransactionModel.user_id == current_user.id)
+        .options(joinedload(TransactionModel.category))
         .offset(offset)
         .limit(limit)
     )

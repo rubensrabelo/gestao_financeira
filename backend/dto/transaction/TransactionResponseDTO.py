@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import date, datetime
 
 from models.enums.TypeEnum import TypeEnum
+from dto.category.CategoryResponseDTO import CategoryResponseDTO
 
 
 class TransactionResponseDTO(BaseModel):
@@ -10,7 +11,7 @@ class TransactionResponseDTO(BaseModel):
     type: TypeEnum
     amount: float
     active: bool
-    category_id: int
+    category: CategoryResponseDTO
     user_id: int
     created_at: datetime
     updated_at: datetime
