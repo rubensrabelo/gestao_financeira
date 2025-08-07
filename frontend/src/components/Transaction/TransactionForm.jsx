@@ -69,6 +69,7 @@ function TransactionForm({ onAdd, categories }) {
         placeholder="Valor"
         value={form.amount}
         onChange={handleChange}
+        step="0.01"
         required
         min={0}
       />

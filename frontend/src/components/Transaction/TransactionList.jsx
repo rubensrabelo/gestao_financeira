@@ -35,8 +35,8 @@ function TransactionList({ transactions }) {
             <tr key={t.id}>
               <td>{formatDate(t.transaction_date)}</td>
               <td>{typeTranslation[t.type]}</td>
-              <td>{t.category_id}</td>
-              <td>x{formatCurrency(t.amount)}</td>
+              <td>{t.category.name}</td>
+              <td>{formatCurrency(t.amount)}</td>
             </tr>
           ))}
         </tbody>
