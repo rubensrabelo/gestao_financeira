@@ -59,6 +59,7 @@ async def get_all(
     statement = (
         select(CategoryModel)
         .where(CategoryModel.user_id == current_user.id)
+        .order_by(CategoryModel.name)
         .offset(offset)
         .limit(limit)
     )

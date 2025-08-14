@@ -59,6 +59,7 @@ async def get_all(
         select(TransactionModel)
         .where(TransactionModel.user_id == current_user.id)
         .options(joinedload(TransactionModel.category))
+        .order_by(TransactionModel.transaction_date)
         .offset(offset)
         .limit(limit)
     )
