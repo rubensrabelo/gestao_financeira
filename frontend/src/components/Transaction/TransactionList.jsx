@@ -7,8 +7,10 @@ function TransactionList({ transactions }) {
   };
 
   const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("pt-BR");
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return `${day.toString().padStart(2, "0")}/${month
+      .toString()
+      .padStart(2, "0")}/${year}`;
   };
 
   const formatCurrency = (value) => {
