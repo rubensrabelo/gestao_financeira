@@ -4,7 +4,7 @@ import styles from "./TransactionForm.module.css";
 
 function TransactionForm({ onAdd, categories, refreshCategories }) {
   const [form, setForm] = useState({
-    transaction_date: "", // campo de data
+    transaction_date: "",
     type: "income",
     amount: "",
     category_id: "",
@@ -45,7 +45,7 @@ function TransactionForm({ onAdd, categories, refreshCategories }) {
   };
 
   const handleCategoryAdded = () => {
-    refreshCategories(); // atualiza categorias sem recarregar
+    refreshCategories();
     setShowCategoryModal(false);
   };
 
@@ -61,8 +61,8 @@ function TransactionForm({ onAdd, categories, refreshCategories }) {
         />
 
         <select name="type" value={form.type} onChange={handleChange}>
-          <option value="income">Ganho</option>
-          <option value="expense">Gasto</option>
+          <option value="income">Entrada</option>
+          <option value="expense">Saída</option>
         </select>
 
         <input
