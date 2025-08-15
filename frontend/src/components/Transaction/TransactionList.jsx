@@ -1,12 +1,13 @@
 import styles from "./TransactionList.module.css";
 
-function TransactionList({ transactions }) {
+function TransactionList({ transactions, loading = false }) {
   const typeTranslation = {
     income: "Entrada",
-    expense: "Saída"
+    expense: "Saída",
   };
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
     const [year, month, day] = dateStr.split("-").map(Number);
     return `${day.toString().padStart(2, "0")}/${month
       .toString()
@@ -14,11 +15,14 @@ function TransactionList({ transactions }) {
   };
 
   const formatCurrency = (value) => {
-    return value.toLocaleString("pt-BR", {
+    if (value == null) return "-";
+    return Number(value).toLocaleString("pt-BR", {
       style: "currency",
-      currency: "BRL"
+      currency: "BRL",
     });
   };
+
+  const rows = Array.isArray(transactions) ? transactions : [];
 
   return (
     <div className={styles.list}>
@@ -33,14 +37,28 @@ function TransactionList({ transactions }) {
           </tr>
         </thead>
         <tbody>
-          {transactions.map((t) => (
-            <tr key={t.id}>
-              <td>{formatDate(t.transaction_date)}</td>
-              <td>{typeTranslation[t.type]}</td>
-              <td>{t.category.name}</td>
-              <td>{formatCurrency(t.amount)}</td>
+          {loading ? (
+            <tr>
+              <td colSpan="4" className={styles.empty}>
+                Carregando...
+              </td>
             </tr>
-          ))}
+          ) : rows.length === 0 ? (
+            <tr>
+              <td colSpan="4" className={styles.empty}>
+                Nenhuma transação encontrada.
+              </td>
+            </tr>
+          ) : (
+            rows.map((t) => (
+              <tr key={t.id}>
+                <td>{formatDate(t.transaction_date)}</td>
+                <td>{typeTranslation[t.type] ?? t.type}</td>
+                <td>{t?.category?.name ?? "-"}</td>
+                <td>{formatCurrency(t.amount)}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
