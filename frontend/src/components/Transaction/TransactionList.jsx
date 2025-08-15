@@ -1,10 +1,8 @@
 import styles from "./TransactionList.module.css";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
-function TransactionList({ transactions, loading = false }) {
-  const typeTranslation = {
-    income: "Entrada",
-    expense: "Saída",
-  };
+function TransactionList({ transactions, loading = false, onEdit, onDelete }) {
+  const typeTranslation = { income: "Entrada", expense: "Saída" };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
@@ -34,18 +32,19 @@ function TransactionList({ transactions, loading = false }) {
             <th>Tipo</th>
             <th>Categoria</th>
             <th>Valor</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="4" className={styles.empty}>
+              <td colSpan="5" className={styles.empty}>
                 Carregando...
               </td>
             </tr>
           ) : rows.length === 0 ? (
             <tr>
-              <td colSpan="4" className={styles.empty}>
+              <td colSpan="5" className={styles.empty}>
                 Nenhuma transação encontrada.
               </td>
             </tr>
@@ -56,6 +55,14 @@ function TransactionList({ transactions, loading = false }) {
                 <td>{typeTranslation[t.type] ?? t.type}</td>
                 <td>{t?.category?.name ?? "-"}</td>
                 <td>{formatCurrency(t.amount)}</td>
+                <td>
+                  <button onClick={() => onEdit?.(t)} className={styles.editBtn}>
+                    <FaEdit />
+                  </button>
+                  <button onClick={() => onDelete?.(t.id)} className={styles.deleteBtn}>
+                    <FaTrash />
+                  </button>
+                </td>
               </tr>
             ))
           )}

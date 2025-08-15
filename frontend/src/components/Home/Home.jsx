@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TransactionList from "../Transaction/TransactionList";
-
 import styles from "./Home.module.css";
 
 function Home() {
@@ -53,8 +52,6 @@ function Home() {
         (a, b) => new Date(a.transaction_date) - new Date(b.transaction_date)
       );
 
-      setTransactions(sortedData);
-
       setTransactions(Array.isArray(sortedData) ? sortedData : []);
     } catch (err) {
       console.error("Erro ao buscar transações:", err);
@@ -84,6 +81,30 @@ function Home() {
     }
   };
 
+  const handleEdit = (transaction) => {
+    navigate(`/transactions/edit/${transaction.id}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta transação?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:8000/transactions/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        alert("Erro ao excluir transação.");
+        return;
+      }
+
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error("Erro ao excluir transação:", error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <h2>Dashboard Financeiro</h2>
@@ -94,7 +115,12 @@ function Home() {
 
       {errMsg && <div className={styles.error}>{errMsg}</div>}
 
-      <TransactionList transactions={transactions} loading={isLoading} />
+      <TransactionList
+        transactions={transactions}
+        loading={isLoading}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <div className={styles.pagination}>
         <button onClick={handlePrevious} disabled={offset === 0}>

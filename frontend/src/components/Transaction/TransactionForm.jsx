@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CategoryForm from "../Category/CategoryForm";
 import styles from "./TransactionForm.module.css";
 
-function TransactionForm({ onAdd, categories, refreshCategories }) {
+function TransactionForm({ onAdd, categories, refreshCategories, initialData }) {
   const [form, setForm] = useState({
     transaction_date: "",
     type: "income",
@@ -11,6 +11,20 @@ function TransactionForm({ onAdd, categories, refreshCategories }) {
   });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const token = localStorage.getItem("token");
+
+  // Preenche os campos se for edição
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        transaction_date: initialData.transaction_date
+          ? initialData.transaction_date.split("T")[0]
+          : "",
+        type: initialData.type || "income",
+        amount: initialData.amount || "",
+        category_id: initialData.category_id || "",
+      });
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,23 +38,31 @@ function TransactionForm({ onAdd, categories, refreshCategories }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch("http://localhost:8000/transactions", {
-        method: "POST",
+      const url = initialData
+        ? `http://localhost:8000/transactions/${initialData.id}`
+        : "http://localhost:8000/transactions";
+
+      const method = initialData ? "PUT" : "POST";
+
+      await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       });
+
       setForm({
         transaction_date: "",
         type: "income",
         amount: "",
         category_id: "",
       });
-      onAdd();
+
+      onAdd(); // Continua chamando o mesmo fluxo (ex: voltar para Home)
     } catch (err) {
-      console.error("Erro ao adicionar transação:", err);
+      console.error("Erro ao salvar transação:", err);
     }
   };
 
@@ -89,7 +111,9 @@ function TransactionForm({ onAdd, categories, refreshCategories }) {
           <option value="new">Nova Categoria</option>
         </select>
 
-        <button type="submit">Adicionar</button>
+        <button type="submit">
+          {initialData ? "Salvar Alterações" : "Adicionar"}
+        </button>
       </form>
 
       {showCategoryModal && (

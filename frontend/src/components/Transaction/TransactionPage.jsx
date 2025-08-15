@@ -46,7 +46,7 @@ function TransactionPage() {
         <TransactionForm
           onAdd={handleTransactionAdded}
           categories={categories}
-          refreshCategories={fetchCategories} // função para atualizar categorias dinamicamente
+          refreshCategories={fetchCategories}
         />
       </div>
     </div>
