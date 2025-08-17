@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TransactionForm from "../Transaction/TransactionForm";
-
 import styles from "./TransactionPage.module.css";
 
 function TransactionPage() {
   const [categories, setCategories] = useState([]);
+  const [transaction, setTransaction] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const { id } = useParams(); // pega o id da rota se for edição
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+    if (id) {
+      fetchTransactionById(id);
+      setIsEditing(true);
+    }
+  }, [id]);
 
   const fetchCategories = async () => {
     try {
@@ -25,7 +32,20 @@ function TransactionPage() {
     }
   };
 
-  const handleTransactionAdded = () => {
+  const fetchTransactionById = async (transactionId) => {
+    try {
+      const res = await fetch(`http://localhost:8000/transactions/${transactionId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Erro ao buscar transação para edição");
+      const data = await res.json();
+      setTransaction(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleTransactionSaved = () => {
     navigate("/home");
   };
 
@@ -35,18 +55,19 @@ function TransactionPage() {
 
   return (
     <div className={styles.container}>
-      <h2>Cadastrar Transação e Categoria</h2>
+      <h2>{isEditing ? "Editar Transação" : "Cadastrar Transação"}</h2>
 
       <button className={styles.backButton} onClick={handleBack}>
         Voltar
       </button>
 
       <div className={styles.formSection}>
-        <h3>Nova Transação</h3>
         <TransactionForm
-          onAdd={handleTransactionAdded}
+          onAdd={handleTransactionSaved}
           categories={categories}
           refreshCategories={fetchCategories}
+          initialData={transaction} // passa a transação se estiver editando
+          isEditing={isEditing}    // flag de edição
         />
       </div>
     </div>

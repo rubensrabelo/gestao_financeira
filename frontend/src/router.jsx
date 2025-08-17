@@ -14,6 +14,7 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/transactions" element={<TransactionPage />} />
+        <Route path="/transactions/edit/:id" element={<TransactionPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -21,7 +21,7 @@ function TransactionForm({ onAdd, categories, refreshCategories, initialData }) 
           : "",
         type: initialData.type || "income",
         amount: initialData.amount || "",
-        category_id: initialData.category_id || "",
+        category_id: initialData.category?.id || initialData.category_id || "",
       });
     }
   }, [initialData]);
@@ -37,11 +37,11 @@ function TransactionForm({ onAdd, categories, refreshCategories, initialData }) 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const url = initialData
         ? `http://localhost:8000/transactions/${initialData.id}`
         : "http://localhost:8000/transactions";
-
       const method = initialData ? "PUT" : "POST";
 
       await fetch(url, {
@@ -60,7 +60,7 @@ function TransactionForm({ onAdd, categories, refreshCategories, initialData }) 
         category_id: "",
       });
 
-      onAdd(); // Continua chamando o mesmo fluxo (ex: voltar para Home)
+      onAdd(); // volta ou atualiza a lista
     } catch (err) {
       console.error("Erro ao salvar transação:", err);
     }

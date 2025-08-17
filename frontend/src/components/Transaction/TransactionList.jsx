@@ -20,7 +20,10 @@ function TransactionList({ transactions, loading = false, onEdit, onDelete }) {
     });
   };
 
-  const rows = Array.isArray(transactions) ? transactions : [];
+  const activeTransactions = transactions.filter((t) => t.active);
+
+
+  const rows = Array.isArray(activeTransactions) ? activeTransactions : [];
 
   return (
     <div className={styles.list}>
