@@ -66,11 +66,6 @@ function Home() {
     navigate("/transactions");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   const handlePrevious = () => {
     setOffset((prev) => Math.max(prev - limit, 0));
   };
@@ -136,10 +131,6 @@ function Home() {
           Próximo ▶
         </button>
       </div>
-
-      <button className={styles.logoutButton} onClick={handleLogout}>
-        Logout
-      </button>
     </div>
   );
 }

@@ -10,7 +10,7 @@ function TransactionPage() {
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const { id } = useParams(); // pega o id da rota se for edição
+  const { id } = useParams();
 
   useEffect(() => {
     fetchCategories();
@@ -49,25 +49,17 @@ function TransactionPage() {
     navigate("/home");
   };
 
-  const handleBack = () => {
-    navigate("/home");
-  };
-
   return (
     <div className={styles.container}>
       <h2>{isEditing ? "Editar Transação" : "Cadastrar Transação"}</h2>
-
-      <button className={styles.backButton} onClick={handleBack}>
-        Voltar
-      </button>
 
       <div className={styles.formSection}>
         <TransactionForm
           onAdd={handleTransactionSaved}
           categories={categories}
           refreshCategories={fetchCategories}
-          initialData={transaction} // passa a transação se estiver editando
-          isEditing={isEditing}    // flag de edição
+          initialData={transaction}
+          isEditing={isEditing}
         />
       </div>
     </div>

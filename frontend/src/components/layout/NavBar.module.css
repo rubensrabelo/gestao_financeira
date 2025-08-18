@@ -1,0 +1,47 @@
+.navbar {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 12px 20px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.actions button {
+  margin-left: 12px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.actions button:first-child {
+  background-color: #60a5fa; /* Home button */
+  color: white;
+}
+
+.actions button:first-child:hover {
+  background-color: #2563eb;
+}
+
+.actions button:last-child {
+  background-color: #ef4444; /* Logout button */
+  color: white;
+}
+
+.actions button:last-child:hover {
+  background-color: #dc2626;
+}
