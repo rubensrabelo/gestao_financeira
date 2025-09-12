@@ -3,7 +3,7 @@ from sqlmodel import Session, select, func
 from schemas.summarySchema import SummaryResponse
 from models.UserModel import UserModel
 from models.TransactionModel import TransactionModel
-from models.enums import TypeEnum
+from models.enums.TypeEnum import TypeEnum
 
 
 def get_summary(
