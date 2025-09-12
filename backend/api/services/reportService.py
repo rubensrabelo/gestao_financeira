@@ -6,7 +6,7 @@ from models.TransactionModel import TransactionModel
 from models.enums import TypeEnum
 
 
-def summary(
+def get_summary(
         session: Session,
         current_user: UserModel,
         month: int | None = None,
@@ -16,17 +16,17 @@ def summary(
 
     if month and year:
         query = query.where(
-            func.extract("month", TransactionModel.transaction_date == month),
-            func.extract("year", TransactionModel.transaction_date == year)
+            func.extract("month", TransactionModel.transaction_date) == month,
+            func.extract("year", TransactionModel.transaction_date) == year
         )
-    else:
+    elif year:
         query = query.where(
-            func.extract("year", TransactionModel.transaction_date == year)
+            func.extract("year", TransactionModel.transaction_date) == year
         )
 
-    results = session.exec(
-        query.where(TransactionModel.user_id == current_user.id)
-    ).all()
+    query = query.where(TransactionModel.user_id == current_user.id)
+
+    results = session.exec(query).all()
 
     total_income = sum(
         t.amount
