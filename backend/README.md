@@ -76,5 +76,3 @@ project/
 │── README.md                  # Documentação do projeto
 
 ```
----
-

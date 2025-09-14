@@ -1,6 +1,10 @@
 from sqlmodel import Session, select, func
 
-from schemas.summarySchema import SummaryResponse
+from schemas.summarySchema import (
+    SummaryResponse,
+    MonthlySummary,
+    MonthlySummaryResponse
+)
 from schemas.balanceTimelineSchema import BalancePoint, BalanceTimelineResponse
 from schemas.ExpenseByCategorySchema import (
     CategoryExpense,
@@ -65,6 +69,61 @@ def get_summary(
         total_expenses=total_expenses,
         balance=balance
     )
+
+
+def get_monthly_summary(
+        session: Session,
+        current_user: UserModel,
+        year: int | None = None
+) -> MonthlySummaryResponse:
+    query = (
+        select(
+            func.extract(
+                "year", TransactionModel.transaction_date
+            ).label("year"),
+            func.extract(
+                "month", TransactionModel.transaction_date
+            ).label("month"),
+            TransactionModel.type,
+            func.sum(TransactionModel.amount).label("total")
+        )
+        .where(TransactionModel.user_id == current_user.id)
+        .group_by("year", "month", TransactionModel.type)
+        .order_by("year", "month")
+    )
+
+    if year:
+        query = query.where(
+            func.extract("year", TransactionModel.transaction_date) == year
+        )
+
+    results = session.exec(query).all()
+
+    summary_map: dict[tuple[int, int], dict[str, float]] = {}
+
+    for row in results:
+        ym = (int(row.year), int(row.month))
+        if ym not in summary_map:
+            summary_map[ym] = {"income": 0, "expenses": 0}
+
+        if row.type == TypeEnum.INCOME.value:
+            summary_map[ym]["income"] = row.total
+        elif row.type == TypeEnum.EXPENSE.value:
+            summary_map[ym]["expenses"] = row.total
+
+    monthly_data = []
+    for (year, month), values in sorted(summary_map.items()):
+        balance = values["income"] - values["expenses"]
+        monthly_data.append(
+            MonthlySummary(
+                month=f"{year}-{month:02d}",
+                income=values["income"],
+                expenses=values["expenses"],
+                balance=balance
+            )
+        )
+
+    return MonthlySummaryResponse(data=monthly_data)
 
 
 def get_balance_timeline(

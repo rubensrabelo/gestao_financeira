@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 
-from schemas.summarySchema import SummaryResponse
+from schemas.summarySchema import SummaryResponse, MonthlySummaryResponse
 from schemas.balanceTimelineSchema import BalanceTimelineResponse
 from schemas.ExpenseByCategorySchema import ExpenseReportResponse
 from models.UserModel import UserModel
@@ -20,6 +20,15 @@ async def summary(
     current_user: UserModel = Depends(get_current_user),
 ) -> SummaryResponse:
     return reportService.get_summary(session, current_user, month, year)
+
+
+@router.get("/monthly-summary", response_model=MonthlySummaryResponse)
+def monthly_summary(
+    year: int | None = None,
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user)
+) -> MonthlySummaryResponse:
+    return reportService.get_monthly_summary(session, current_user, year)
 
 
 @router.get("/balance-timeline", response_model=BalanceTimelineResponse)
