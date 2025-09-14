@@ -65,6 +65,7 @@ project/
 │   │   ├── routes/          # Rotas organizadas por módulo
 │   │   └── controller.py    # Ponto central para registro das rotas
 │   ├── models/              # Modelos do banco de dados
+│   ├── schemas/             # Esquemas para a validação com o Pydantic
 │   ├── dto/                 # Data Transfer Objects (Pydantic/Response/Request)
 │   ├── middleware/          # Middlewares (ex: autenticação, tratamento de erros)
 │   └── main.py               # Arquivo principal da aplicação FastAPI

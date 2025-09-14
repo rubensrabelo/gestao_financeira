@@ -3,6 +3,7 @@ from sqlmodel import Session
 
 from schemas.summarySchema import SummaryResponse
 from schemas.balanceTimelineSchema import BalanceTimelineResponse
+from schemas.ExpenseByCategorySchema import ExpenseReportResponse
 from models.UserModel import UserModel
 from middleware.auth import get_current_user
 from database import get_session
@@ -34,3 +35,11 @@ async def balance_timeline(
         month=month,
         year=year,
     )
+
+
+@router.get("/expenses/by-category", response_model=ExpenseReportResponse)
+def expenses_by_category(
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user),
+) -> ExpenseReportResponse:
+    return reportService.get_expenses_by_category(session, current_user)

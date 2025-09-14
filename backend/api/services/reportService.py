@@ -2,8 +2,13 @@ from sqlmodel import Session, select, func
 
 from schemas.summarySchema import SummaryResponse
 from schemas.balanceTimelineSchema import BalancePoint, BalanceTimelineResponse
+from schemas.ExpenseByCategorySchema import (
+    CategoryExpense,
+    ExpenseReportResponse
+)
 from models.UserModel import UserModel
 from models.TransactionModel import TransactionModel
+from models.CategoryModel import CategoryModel
 from models.enums.TypeEnum import TypeEnum
 
 
@@ -87,3 +92,43 @@ def get_balance_timeline(
         timeline.append(BalancePoint(date=t.transaction_date, balance=balance))
 
     return BalanceTimelineResponse(timeline)
+
+
+def get_expenses_by_category(
+        session: Session,
+        current_user: UserModel
+) -> ExpenseReportResponse:
+    stmt = (
+        select(
+            CategoryModel.name,
+            func.sum(TransactionModel.amount).label("total")
+        )
+        .join(
+            TransactionModel,
+            TransactionModel.category_id == CategoryModel.id
+        )
+        .where(
+            TransactionModel.type == TypeEnum.EXPENSE.value,
+            TransactionModel.user_id == current_user.id
+        )
+        .group_by(CategoryModel.name)
+    )
+
+    result = session.exec(stmt).all()
+
+    if not result:
+        return ExpenseReportResponse(categories=[])
+
+    total_expenses = sum(row.total for row in result)
+
+    categories = [
+        CategoryExpense(
+            category=row.name,
+            total=row.total,
+            percentage=(row.total / total_expenses) * 100
+            if total_expenses > 0 else 0
+        )
+        for row in sorted(result, key=lambda x: x.total, reverse=True)
+    ]
+
+    return ExpenseReportResponse(categories=categories)
