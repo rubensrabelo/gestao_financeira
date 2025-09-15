@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlmodel import Session
 
 from schemas.summarySchema import SummaryResponse, MonthlySummaryResponse
@@ -8,6 +8,8 @@ from models.UserModel import UserModel
 from middleware.auth import get_current_user
 from database import get_session
 from api.services import reportService
+from schemas.comparisonSchema import ComparisonResponse
+
 
 router = APIRouter()
 
@@ -52,3 +54,19 @@ def expenses_by_category(
     current_user: UserModel = Depends(get_current_user),
 ) -> ExpenseReportResponse:
     return reportService.get_expenses_by_category(session, current_user)
+
+
+@router.post("/compare", response_model=ComparisonResponse)
+def compare_finances(
+    year: int | None = None,
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user)
+) -> ComparisonResponse:
+    try:
+        return reportService.get_monthly_comparison(
+            session,
+            current_user,
+            year
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
