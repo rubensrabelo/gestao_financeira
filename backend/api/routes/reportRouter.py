@@ -1,9 +1,13 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlmodel import Session
 
-from schemas.summarySchema import SummaryResponse, MonthlySummaryResponse
+from schemas.summarySchema import (
+    SummaryResponse,
+    KeyIndicatorsResponse,
+    MonthlySummaryResponse
+)
 from schemas.balanceTimelineSchema import BalanceTimelineResponse
-from schemas.ExpenseByCategorySchema import ExpenseReportResponse
+from schemas.expenseByCategorySchema import ExpenseReportResponse
 from models.UserModel import UserModel
 from middleware.auth import get_current_user
 from database import get_session
@@ -14,14 +18,36 @@ from schemas.comparisonSchema import ComparisonResponse
 router = APIRouter()
 
 
+@router.get("/", response_model=KeyIndicatorsResponse)
+def indicators(
+    month: int | None = Query(default=None, ge=1, le=12),
+    year: int | None = None,
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user),
+) -> KeyIndicatorsResponse:
+    return reportService.get_summary_and_indicators(
+        session=session,
+        current_user=current_user,
+        month=month,
+        year=year,
+        include_indicators=True
+    )
+
+
 @router.get("/summary", response_model=SummaryResponse)
-async def summary(
+def summary(
     month: int | None = Query(default=None, ge=1, le=12),
     year: int | None = None,
     session: Session = Depends(get_session),
     current_user: UserModel = Depends(get_current_user),
 ) -> SummaryResponse:
-    return reportService.get_summary(session, current_user, month, year)
+    return reportService.get_summary_and_indicators(
+        session=session,
+        current_user=current_user,
+        month=month,
+        year=year,
+        include_indicators=False
+    )
 
 
 @router.get("/monthly-summary", response_model=MonthlySummaryResponse)

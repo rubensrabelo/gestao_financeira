@@ -2,11 +2,12 @@ from sqlmodel import Session, select, func
 
 from schemas.summarySchema import (
     SummaryResponse,
+    KeyIndicatorsResponse,
     MonthlySummary,
     MonthlySummaryResponse
 )
 from schemas.balanceTimelineSchema import BalancePoint, BalanceTimelineResponse
-from schemas.ExpenseByCategorySchema import (
+from schemas.expenseByCategorySchema import (
     CategoryExpense,
     ExpenseReportResponse
 )
@@ -44,12 +45,13 @@ def _build_transaction_query(
     return session.exec(query).all()
 
 
-def get_summary(
-        session: Session,
-        current_user: UserModel,
-        month: int | None = None,
-        year: int | None = None,
-) -> SummaryResponse:
+def get_summary_and_indicators(
+    session: Session,
+    current_user: UserModel,
+    month: int | None = None,
+    year: int | None = None,
+    include_indicators: bool = False
+):
     results = _build_transaction_query(
         session,
         current_user.id,
@@ -58,16 +60,27 @@ def get_summary(
     )
 
     total_income = sum(
-        t.amount
-        for t in results
-        if t.type == TypeEnum.INCOME.value
+        t.amount for t in results if t.type == TypeEnum.INCOME.value
     )
     total_expenses = sum(
-        t.amount
-        for t in results
-        if t.type == TypeEnum.EXPENSE.value
+        t.amount for t in results if t.type == TypeEnum.EXPENSE.value
     )
     balance = total_income - total_expenses
+
+    if include_indicators:
+        income_committed_ratio = (
+            (total_expenses / total_income) * 100 if total_income > 0 else 0
+        )
+        savings_rate = (
+            (balance / total_income) * 100 if total_income > 0 else 0
+        )
+        return KeyIndicatorsResponse(
+            total_income=total_income,
+            total_expenses=total_expenses,
+            balance=balance,
+            income_committed_ratio=income_committed_ratio,
+            savings_rate=savings_rate
+        )
 
     return SummaryResponse(
         total_income=total_income,
@@ -152,7 +165,7 @@ def get_balance_timeline(
         if t.type == TypeEnum.INCOME.value:
             balance += t.amount
         elif t.type == TypeEnum.EXPENSE.value:
-            balance += t.amount
+            balance -= t.amount
         timeline.append(BalancePoint(date=t.transaction_date, balance=balance))
 
     return BalanceTimelineResponse(timeline)

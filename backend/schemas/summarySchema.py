@@ -7,6 +7,11 @@ class SummaryResponse(BaseModel):
     balance: float
 
 
+class KeyIndicatorsResponse(SummaryResponse):
+    income_committed_ratio: float  # % da renda comprometida
+    savings_rate: float  # taxa de poupança
+
+
 class MonthlySummary(BaseModel):
     month: str   # ex.: "2025-09"
     income: float
