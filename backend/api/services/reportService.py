@@ -168,7 +168,7 @@ def get_balance_timeline(
             balance -= t.amount
         timeline.append(BalancePoint(date=t.transaction_date, balance=balance))
 
-    return BalanceTimelineResponse(timeline)
+    return BalanceTimelineResponse(timeline=timeline)
 
 
 def get_expenses_by_category(

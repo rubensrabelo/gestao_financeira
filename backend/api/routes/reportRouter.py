@@ -82,7 +82,7 @@ def expenses_by_category(
     return reportService.get_expenses_by_category(session, current_user)
 
 
-@router.post("/compare", response_model=ComparisonResponse)
+@router.get("/compare", response_model=ComparisonResponse)
 def compare_finances(
     year: int | None = None,
     session: Session = Depends(get_session),
