@@ -5,13 +5,16 @@ import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import Home from "./components/Home/Home";
 import TransactionPage from "./components/Transaction/TransactionPage";
+import Dashboard from "./pages/Report/Dashboard";
 
 // Layouts
 const PublicLayout = () => <Outlet />;
 
 const PrivateLayout = () => {
   const token = localStorage.getItem("token");
-  if (!token) return <Navigate to="/login" replace />;
+  
+  if (!token)
+    return <Navigate to="/login" replace />;
 
   return (
     <div>
@@ -37,6 +40,7 @@ export default function AppRouter() {
           <Route path="/home" element={<Home />} />
           <Route path="/transactions" element={<TransactionPage />} />
           <Route path="/transactions/edit/:id" element={<TransactionPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
         {/* Fallback */}
