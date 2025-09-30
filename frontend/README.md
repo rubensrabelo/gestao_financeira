@@ -27,7 +27,7 @@ O sistema foi desenvolvido em **React** e se comunica com uma **API backend** pa
 
 ---
 
-## 📂 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```bash
 src/

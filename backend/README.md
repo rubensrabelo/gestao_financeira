@@ -1,7 +1,7 @@
 # Finance API
 
-API backend para gerenciamento de **usuários, categorias e transações financeiras**, desenvolvida com **FastAPI** e **SQLModel**.  
-Permite registrar transações (entrada/saída), organizar por categorias e gerenciar dados de forma segura com autenticação JWT.
+API **backend** para gerenciamento de **usuários, categorias e transações financeiras**, desenvolvida com **FastAPI** e **SQLModel**.
+Permite registrar transações (**entradas** e **saídas**), organizá-las por categorias e gerenciar dados de forma segura com **autenticação JWT**.
 
 ---
 
@@ -10,6 +10,7 @@ Permite registrar transações (entrada/saída), organizar por categorias e gere
 ```mermaid
 classDiagram
   direction LR
+
   class User {
     - id: int
     - firstname: str
@@ -36,43 +37,43 @@ classDiagram
     - updated_at: datetime
   }
 
-
-  
   User "1" -- "*" Transaction
   User "1" -- "*" Category
   Category "*" -- "1" Transaction
 ```
+
 ---
 
-## Tecnologias
+## 🛠️ Tecnologias Utilizadas
 
-- **Python 3.11+** → Linguagem principal do backend  
-- **FastAPI** → Framework web rápido e moderno para criação de APIs  
-- **SQLModel** → ORM que combina o poder do SQLAlchemy com a validação do Pydantic  
-- **PostgreSQL** → Banco de dados relacional robusto e escalável  
-- **JWT (JSON Web Token)** → Autenticação segura e baseada em tokens  
-- **Pydantic** → Validação e tipagem de dados de forma simples e eficiente  
-- **Docker** → Containerização para padronizar o ambiente de desenvolvimento e produção  
+* **Python 3.11+** → linguagem principal do backend
+* **FastAPI** → framework rápido e moderno para criação de APIs
+* **SQLModel** → ORM que combina o poder do SQLAlchemy com a validação do Pydantic
+* **PostgreSQL** → banco de dados relacional robusto e escalável
+* **JWT (JSON Web Token)** → autenticação segura baseada em tokens
+* **Pydantic** → validação e tipagem de dados eficiente
+* **Docker & Docker Compose** → containerização e orquestração para padronizar ambientes
 
 ---
 
 ## 📂 Estrutura do Projeto
 
 ```bash
-project/
+finance_api/
 │── app/
 │   ├── api/
-│   │   ├── routes/          # Rotas organizadas por módulo
-│   │   └── controller.py    # Ponto central para registro das rotas
-│   ├── models/              # Modelos do banco de dados
-│   ├── schemas/             # Esquemas para a validação com o Pydantic
-│   ├── dto/                 # Data Transfer Objects (Pydantic/Response/Request)
-│   ├── middleware/          # Middlewares (ex: autenticação, tratamento de erros)
-│   └── main.py               # Arquivo principal da aplicação FastAPI
+│   │   ├── routes/           # Rotas organizadas por módulo
+│   │   └── controller.py     # Registro central das rotas
+│   ├── models/               # Modelos do banco de dados (SQLModel)
+│   ├── schemas/              # Esquemas para validação (Pydantic)
+│   ├── dto/                  # Data Transfer Objects (request/response)
+│   ├── middleware/           # Middlewares (ex.: autenticação, erros)
+│   └── main.py               # Ponto de entrada da aplicação FastAPI
 │
 │── requirements.txt          # Dependências do projeto
-│── Dockerfile                 # Configuração para containerização
-│── docker-compose.yml         # Orquestração com Docker
-│── README.md                  # Documentação do projeto
-
+│── Dockerfile                # Configuração de container
+│── docker-compose.yml        # Orquestração dos serviços
+│── README.md                 # Documentação do projeto
 ```
+
+---
