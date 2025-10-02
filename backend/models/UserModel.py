@@ -13,7 +13,7 @@ class UserBase(SQLModel):
     firstname: str = Field(max_length=50)
     lastname: str = Field(max_length=50)
     email: str = Field(unique=True)
-    password: str
+    password: str = Field(..., min_length=6, max_length=72)
     active: bool = Field(default=True)
 
     created_at: datetime = Field(

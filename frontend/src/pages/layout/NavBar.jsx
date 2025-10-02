@@ -8,6 +8,10 @@ export default function NavBar() {
     navigate("/home");
   };
 
+  const handleDashBoard = () => {
+    navigate("/dashboard");
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -18,6 +22,7 @@ export default function NavBar() {
       <div className={styles.logo}>FinanceApp</div>
       <div className={styles.actions}>
         <button onClick={handleHome}>Home</button>
+        <button onClick={handleDashBoard}>Dashboard</button>
         <button onClick={handleLogout}>Logout</button>
       </div>
     </div>

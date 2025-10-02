@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import NavBar from "./components/layout/NavBar";
-import Landing from "./components/Landing/Landing";
-import Login from "./components/Login/Login";
-import Register from "./components/Register/Register";
-import Home from "./components/Home/Home";
-import TransactionPage from "./components/Transaction/TransactionPage";
+import NavBar from "./pages/layout/NavBar";
+import Landing from "./pages/Landing/Landing";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import Home from "./pages/Home/Home";
+import TransactionPage from "./pages/Transaction/TransactionPage";
 import Dashboard from "./pages/Report/Dashboard";
 
 // Layouts

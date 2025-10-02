@@ -4,7 +4,6 @@ import { getExpensesByCategory, getIndicators, getSummary } from "../../api/serv
 import SummaryCard from "./Components/SummaryCard";
 import IndicatorsCard from "./Components/IndicatorsCard";
 import ExpensesByCategoryChart from "./Components/ExpensesByCategoryChart";
-import IndicatorsCard from "./Components/IndicatorsCard";
 
 function Dashboard() {
     const [summary, setSummary] = useState(null);

@@ -13,19 +13,21 @@
 
 * [x] Implementar autenticação de usuários (JWT)
 * [x] Criar endpoints CRUD para **usuários, transações e categorias**
+* [x] Documentar a API com **Swagger/OpenAPI**
 * [ ] Melhorar validações e DTOs com **Pydantic**
 * [ ] Implementar testes unitários básicos das rotas principais
-* [x] Documentar a API com **Swagger/OpenAPI**
 * [ ] Adicionar logs para operações críticas
 
 ---
 
 ## Frontend
 
-* [ ] Conectar frontend à API do backend
-* [ ] Criar interface para registro de **transações** e gerenciamento de **categorias**
-* [ ] Implementar telas de **login, cadastro e dashboard**
-* [ ] Melhorar layout, responsividade e experiência do usuário (UI/UX)
+* [x] Conectar frontend à API do backend
+* [x] Criar interface para registro de **transações** e gerenciamento de **categorias**
+* [x] Implementar telas de **login e cadastro**
+* [ ] Implementar telas de **dashboard**
+    * [x] Criar um link entre a nav e a dash
+    * [ ] Testar
 
 ---
 

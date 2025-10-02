@@ -1,6 +1,5 @@
-from pydantic import BaseModel
-from sqlmodel import Field
+from pydantic import BaseModel, Field
 
 
 class CategoryUpdateDTO(BaseModel):
-    name: str = Field(max_length=50)
+    name: str = Field(..., min_length=1, max_length=50)
